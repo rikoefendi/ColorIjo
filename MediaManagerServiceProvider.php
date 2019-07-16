@@ -35,6 +35,7 @@ class MediaManagerServiceProvider extends ServiceProvider
             __DIR__.'/resources/assets/css/app.scss' => resource_path('sass/mediamanager.scss'),
             __DIR__.'/resources/assets/js/app.js' => resource_path('js/mediamanager.js'),
         ], 'asset');
+	 $this->loadRoutesFrom(__DIR__.'/routes/web.php');
     }
 
     public function loadHelpers()
