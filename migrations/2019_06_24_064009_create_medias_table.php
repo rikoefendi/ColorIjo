@@ -16,11 +16,12 @@ class CreateMediasTable extends Migration
         Schema::create('medias', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('user_id');
+	    $table->string('unique', 255);
             $table->string('title', 255);
             $table->string('name', 255);
             $table->string('source', 255);
             $table->string('alt', 255);
-            $table->string('file_type', 20);
+            $table->string('mime', 20);
             $table->timestamps();
             $table->timestamp('deleted_at');
         });
