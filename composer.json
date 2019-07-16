@@ -9,15 +9,14 @@
         "intervention/imagecache": "^2.3"
     },
     "license": "MIT",
-    "authors": [
-        {
-            "name": "Riko Efendi",
-            "email": "rikoefendi100@gmail.com"
-        }
-    ],
+    "authors": [{
+        "name": "Riko Efendi",
+        "email": "rikoefendi100@gmail.com"
+    }],
     "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
             "ColorIjo\\MediaManager": ""
         }
+    }
 }
