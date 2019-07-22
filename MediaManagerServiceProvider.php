@@ -9,6 +9,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Foundation\AliasLoader;
 use ColorIjo\MediaManager\MedmaFacade;
 use ColorIjo\MediaManager\MediaManager;
+use ColorIjo\MediaManager\Model;
 
 class MediaManagerServiceProvider extends ServiceProvider
 {
@@ -35,6 +36,9 @@ class MediaManagerServiceProvider extends ServiceProvider
             __DIR__.'/resources/assets/css/app.scss' => resource_path('sass/mediamanager.scss'),
             __DIR__.'/resources/assets/js/app.js' => resource_path('js/mediamanager.js'),
         ], 'asset');
+        $this->publishes([
+            __DIR__.'/config.php' => config_path('medma.php'),
+        ], 'config');
 	 $this->loadRoutesFrom(__DIR__.'/routes/web.php');
     }
 

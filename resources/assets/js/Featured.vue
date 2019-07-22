@@ -54,7 +54,7 @@
         <div class="medma-vXZd">
           <div
             class="medma-LkXa"
-            style="max-height: 530px;flex-direction: column;justify-content: flex-start;align-items: normal; overflow: auto;"
+            style="flex-direction: column;justify-content: flex-start;align-items: normal; overflow: auto; padding: 15px;"
             :class="[file.unique ? 'a-xAVd': 'Xdfs']"
           >
             <div class="medma-columns">
@@ -63,8 +63,7 @@
                   :data-id="file.id"
                   class="medma-thumbnail"
                   ref="thumbnail"
-                  @click="selected(i, $event)"
-                  @dblclick="getImageDetail(file, i)"
+                  @click="getImageDetail(file, i)"
                 >
                   <div class="medma-image">
                     <div class="medma-zxvf"></div>
@@ -86,7 +85,7 @@
           <div
             class="medma-XAvz"
             v-if="file.unique"
-            style="max-height: 530px;overflow: auto;"
+            style="overflow: auto;"
           >
             <div class="medma-Xadf" style="text-align: center">
               <img :src="file.url" alt="" class="medma-vmxZ" />
@@ -94,25 +93,25 @@
             <div class="medma-Vx-xss">
               <div class="medma-Gzdf">
                 <strong>Title</strong>
-                <input type="text" class="medma-dffs" v-model="file.title" />
+                <input type="text" class="medma-control" v-model="file.title" />
               </div>
               <div class="medma-Gzdf">
                 <strong>Caption / Alt</strong>
-                <textarea class="medma-dffs" v-model="file.alt"></textarea>
+                <textarea class="medma-control" v-model="file.alt"></textarea>
               </div>
               <div class="medma-Gzdf">
                 <strong>Source</strong>
-                <input type="text" class="medma-dffs" v-model="file.source" />
+                <input type="text" class="medma-control" v-model="file.source" />
               </div>
               <div class="medma-Gzdf">
                 <strong>Uploaded By</strong>
-                <input type="text" class="medma-dffs" disabled />
+                <input type="text" class="medma-control" disabled />
               </div>
               <div class="medma-Gzdf">
                 <strong>Link</strong>
                 <input
                   type="text"
-                  class="medma-dffs"
+                  class="medma-control"
                   readonly
                   v-model="file.url"
                 />

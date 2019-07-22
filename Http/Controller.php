@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManagerStatic as Image;
 use ColorIjo\MediaManager\Model;
+use Illuminate\Support\Facades\Crypt;
 use Hash;
 /**
  *
@@ -26,12 +27,25 @@ class Controller extends BaseController
         return view('medma::featured');
     }
 
-    public function list()
+    public function list(Request $request)
     {
-        $data = Model::all('name', 'id', 'mime', 'unique');
-        foreach ($data as $d) {
-            $d['thumbnailUrl'] = env('APP_URL').'/media/d/file/'.$d['unique'].'?s=thumbnail';
+        $fields = $request->field ? explode(',',$request->field) : ['name', 'id', 'mime', 'unique'];
+        if($request->field){
+            $fieds = explode(',', $request->field);
         }
+        $data = Model::select($fields)->orderBy('name', 'ASC')->paginate(4)->toArray();
+        $callback = [];
+        foreach ($data['data'] as $d) {
+            if($request->size){
+                $sizes = explode(',', $request->size);
+                foreach ($sizes as $size) {
+                    $d['url'][$size] = env('APP_URL').'/media/d/file/'.$d['unique'].'/'.$size.'.jpg';
+                }
+            }
+            $d['url']['thumb'] =  env('APP_URL').'/media/d/file/'.$d['unique'].'/default.jpg';
+            $callback[] = $d;
+        }
+        $data['data'] = collect($callback);
         return $data;
     }
 
@@ -42,16 +56,15 @@ class Controller extends BaseController
         $name = $file->getClientOriginalName();
         $realPath = $file->getRealPath();
         $title = preg_replace('/\\.[^.\\s]{3,4}$/', '', $name);
-        $unique = uniqid();
-
-        //check file is exists
+        // $this->resizeImage($file);
+        // //check file is exists
         $isExist = Model::where('name', $name)->first();
         if($isExist){
             return response()->json([
                 'msg' => 'File is exists!!!'
             ], 422);
         }
-        Storage::put('/images/'.$unique, base64_encode(file_get_contents($realPath)));
+        $unique = $this->resizeImage($file);
         $model = new Model();
         $model->name = $name;
         $model->mime = $mime;
@@ -60,7 +73,7 @@ class Controller extends BaseController
         $model->unique = $unique;
         $model->save();
         return [
-            'thumbnailUrl' => env('APP_URL').'/media/d/file/'.$unique.'?s=thumbnail',
+            'url' => ['thumb' => env('APP_URL').'/media/d/file/'.$model->unique.'/default.jpg'],
             'name' => $name,
             'mime' => $mime,
             'unique' => $model->unique,
@@ -68,13 +81,25 @@ class Controller extends BaseController
         ];
     }
 
-    public function show($unique)
+    public function show($unique, Request $request)
     {
-        $data = Model::select('id', 'name', 'title', 'source', 'alt', 'mime', 'created_at', 'unique')->where('unique', $unique)->firstOrFail();
-        $binary = base64_decode(Storage::get('images/'.$data['unique']));
-        $data['url'] = env('APP_URL').'/media/d/file/'.$data['unique'];
-        $data['size'] = Storage::size('images/'.$data['unique']);
-        if(preg_match("/(svg)+/", $data->mime)){
+        $fields = $request->field ? explode(',',$request->field) : ['id', 'name', 'title', 'source', 'alt', 'mime', 'created_at', 'unique'];
+        if($request->field){
+            $fieds = explode(',', $request->field);
+        }
+        $data = Model::select($fields)->where('unique', $unique)->firstOrFail()->toArray();
+        $path = config('medma.path').'/original/'.$data['unique'];
+        if($request->size){
+            $sizes = explode(',', $request->size);
+            foreach ($sizes as $size) {
+                $data['url'][$size] = env('APP_URL').'/media/d/file/'.$data['unique'].'/'.$size.'.jpg';
+            }
+        }
+
+        $binary = base64_decode(Storage::get($path));
+        // $data['url'] = env('APP_URL').'/media/d/file/'.\Crypt::encrypt($data['unique']).'/original';
+        $data['size'] = Storage::size($path);
+        if(preg_match("/(svg)+/", $data['mime'])){
             $xmlget = simplexml_load_string($binary);
             $xmlattributes = $xmlget->attributes();
             $width = (string) $xmlattributes->width;
@@ -103,13 +128,48 @@ class Controller extends BaseController
         ], 200);
     }
 
-    public function destroy($unique)
-    {
-        $model = Model::where('unique', $unique)->firstOrFail();
-        //delete file
-        Storage::delete('images/'.$model->unique);
+    public function getImageLink($unique, $size){
+        $model = Model::select('mime', 'name', 'unique')->where('unique', $unique)->firstOrFail();
+        $sizes = array_keys(config('medma.size'));
+        $sizes[] = 'maxresdefault';
+        $sizes[] = 'default';
+        $sizes[] = 'original';
+        foreach ($sizes as $s) {
+            if($s.'.jpg' == $size){
+                return $this->getImage($model, $s);
+            }
+        }
+        abort(404);
+    }
+    private function getImage($model, $size){
 
-        $model->delete();
+        $path = config('medma.path').'/'.$size.'/'.$model->unique;
+        if(!Storage::exists($path)){
+            abort(404);
+        }
+        $image = base64_decode(Storage::get($path));
+
+        return response()->make($image, 200, [
+                        'Content-Type' => $model->mime,
+                        'Content-Disposition' => 'inline;filename="'.$model->name.'"',
+                        'Cache-Control' => 'public, max-age=86400, no-transform'
+                    ]);
+
+    }
+    public function destroy(Request $request)
+    {
+        $models = Model::whereIn('unique', $request->uniques)->get();
+        //delete file
+        $sizes = config('medma.size');
+        $sizes[] = 'original';
+        $sizes[] = 'default';
+        $sizes[] = 'maxresdefault';
+        foreach ($models as $model) {
+            foreach ($sizes as $size => $res) {
+                Storage::delete(config('medma.path').'/'.$size.'/'.$model->unique);
+            }
+            $model->delete();
+        }
 
         return response()->json([
             'error' => false,
@@ -117,35 +177,71 @@ class Controller extends BaseController
         ]);
     }
 
-    public function getImage($unique, Request $request)
-    {
-        $model = Model::select('mime', 'unique', 'name')->where('unique', $unique)->first();
-        if(preg_match("/(svg)+/", $model->mime)){
-            $binary = base64_decode(Storage::get('images/'.$unique));
-            // dd($binary);
-            return response()->make($binary, 200, ['Content-Type' => $model->mime, 'Content-Disposition' => 'inline; filename="'.$model->name.'"', 'cache-control' => 'private, max-age=86400, no-transform']);
+    private function resizeImage($file){
+        $sizes = config('medma.size');
+        $sizes['default'] = '200x190';
+        $sizes['maxresdefault'] = '';
+        $name = uniqid();
+        $pathOri = config('medma.path').'/original/'.$name;
+        foreach ($sizes as $pathName => $res) {
+            $this->makeFile($file, $pathName, $name, explode('x', $res));
         }
-        $img = Image::cache(function($image) use ($unique, $request, $model){
-            $encoded = $image->make(base64_decode(Storage::get('images/'.$unique)));
-            if($request->s){
-                if($request->s == 'thumbnail'){
-                    $image->fit(200, 190, function ($constrait) {
-                        $constrait->upsize();
-                    });
-                }else{
-                    $size = explode(',', $request->s);
-                    if(count($size) != 2){
-                        return 'height * width is required separated with coma!!!';
-                    }
-                    if(is_numeric($size[0]) && is_numeric($size[1])){
-                        $image->resize($size[0], $size[1], function ($constrait) {
-                            $constrait->upsize();
-                        });
-                    }
-                }
+        Storage::put($pathOri, base64_encode(file_get_contents($file->getRealPath())));
+        return $name;
+    }
+
+    private function makeFile($file, $pathName, $name, $res){
+        $path = config('medma.path').'/'.$pathName.'/'.$name;
+        $content = file_get_contents($file->getRealPath());
+        $quality = config('medma.compress_quality');
+        $image = Image::make($content);
+        if(is_numeric($res[0]) && is_numeric($res[1])){
+            if($image->width() < $image->height() || $pathName == 'thumb'){
+                $image->fit($res[0], $res[1]);
+            }else{
+                $image->resize($res[0], $res[1]);
             }
-        });
-        // dd(['Content-Disposition' => 'attachment; filename="'.$model->name.'"']);
-        return response()->make($img, 200, ['Content-Type' => $model->mime, 'Content-Disposition' => 'inline; filename="'.$model->name.'"', 'cache-control' => 'private, max-age=86400, no-transform']);
+        }
+        $image->encode($file->getClientOriginalExtension(), $quality)->encoded;
+        Storage::put($path, base64_encode($image));
+    }
+
+    public function getLinkDownload(Request $request)
+    {
+        $hash = Crypt::encrypt(uniqid());
+        $unique = Crypt::encrypt($request->uniques);
+        \Cache::put($unique, $hash, now()->addHours(12));
+        return ['url' => env('APP_URL').'/download/'.$hash.'/'.$unique];
+    }
+
+    public function download($hash, $unique)
+    {
+        $chaceHash = \Cache::get($unique);
+        $uniques = Crypt::decrypt($unique);
+        $path = config('medma.path').'/original/';
+        if(!$chaceHash || $hash != $chaceHash || !is_array($uniques)){
+            return '!terlarang';
+        }
+
+
+        if(count($uniques) >= 2){
+            $options = new \ZipStream\Option\Archive();
+            $options->setSendHttpHeaders(true);
+            return response()->stream(function() use ($uniques, $options, $path) {
+                $data = Model::select('unique', 'name')->whereIn('unique',  $uniques)->get();
+                $zip = new \ZipStream\ZipStream('medma-download-'.now().'.zip', $options);
+                foreach ($data as $d) {
+                    $file = Storage::get($path.$d->unique);
+                    $zip->addFile($d->name, base64_decode($file));
+                }
+                $zip->finish();
+            });
+        }
+        $model = Model::select('unique', 'name')->where('unique', $uniques)->first();
+        return response()->make(base64_decode(Storage::get($path.$model->unique)), 200, [
+                        'Content-Type' => $model->mime,
+                        'Content-Disposition' => 'attachment;filename="'.$model->name.'"',
+                        'Cache-Control' => 'private, max-age=86400, no-transform'
+                    ]);
     }
 }

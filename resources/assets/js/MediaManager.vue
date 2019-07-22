@@ -1,13 +1,19 @@
 <template>
-  <section class="medma-section">
+  <section
+    class="medma-section"
+    oncontextmenu="return false"
+    onselectstart="return false"
+    ondragstart="return false"
+    ref="medma_section"
+  >
     <div class="medma-container">
       <div class="medma-panel">
         <div class="medma-upload-input">
           <button
             type="button"
-            class="btn btn-default"
+            class="medma-button"
             style="display: inline-block; position: relative;"
-            @click="onClickInputFile()"
+            @click="onClickInputFile"
           >
             Add New
           </button>
@@ -22,30 +28,36 @@
         </div>
         <div class="medma-filter">
           <div class="medma-filter-form">
-            <select class="form-control">
+            <!-- <select class="medma-control">
               <option value="">All Media Items</option>
               <option value="">Images</option>
               <option value="">Video</option>
               <option value="">Audio</option>
               <option value="">Document</option>
-            </select>
+            </select> -->
             <input
               type="search"
-              class="form-control"
+              class="medma-control"
               placeholder="Search media items..."
+              v-model="search"
             />
           </div>
         </div>
       </div>
       <div class="medma-columns">
-        <div class="medma-column" v-for="(file, i) in listFiles">
+        <div
+          class="medma-column"
+          v-for="(file, i) in listingFiles"
+          v-if="listFiles.data.length"
+        >
           <div
-            :data-id="file.id"
             class="medma-thumbnail"
             ref="thumbnail"
-            @click="selected(i, $event)"
-            @click.shift.ctrl="multiSelected(i)"
-            @dblclick="getImageDetail(file, i)"
+            @click.shift="multiSelected(i)"
+            @click="getImageDetail(i, $refs.thumbnail[i].dataset.unique)"
+            @click.right="openContextMenu(i, $event, file)"
+            :data-unique="file.unique"
+            :data-index="i"
           >
             <!-- <div
             :data-id="file.id"
@@ -56,7 +68,7 @@
           > -->
             <div class="medma-image">
               <div class="medma-zxvf"></div>
-              <img :src="file.thumbnailUrl" alt="" />
+              <img :src="file.url.thumb" alt="" />
             </div>
             <div class="medma-caption">
               <div class="medma-type">
@@ -66,22 +78,27 @@
             </div>
           </div>
         </div>
+        <div class="medma-column" style="justify-content:center; top: 38%; bottom: 50%;">
+        <infinite-loading @distance="1" @infinite="infiniteHandler"> </infinite-loading>
+        </div>
       </div>
     </div>
-    <div class="medma-up" v-show="uploadFile.length">
+    <div class="medma-up" v-show="fileUploadForm.uploadFile.length">
       <div class="medma-up-header">
         <div class="medma-up-title">
-          <p v-if="successed">{{ successed }} Upload Selesai</p>
+          <p v-if="fileUploadForm.text">{{ fileUploadForm.text }}</p>
         </div>
         <div class="medma-up-action">
           <div
             class="medma-qrre"
-            @click="expandFile = !expandFile"
-            v-bind:data-tooltip="[expandFile ? 'Minimalkan' : 'Maksimalkan']"
+            @click="fileUploadForm.expandFile = !fileUploadForm.expandFile"
+            v-bind:data-tooltip="[
+              fileUploadForm.expandFile ? 'Minimalkan' : 'Maksimalkan'
+            ]"
           >
             <div class="medma-tuxz">
               <svg
-                v-if="expandFile"
+                v-if="fileUploadForm.expandFile"
                 x="0px"
                 y="0px"
                 width="14px"
@@ -95,7 +112,7 @@
                 ></path>
               </svg>
               <svg
-                v-if="!expandFile"
+                v-if="!fileUploadForm.expandFile"
                 x="0px"
                 y="0px"
                 width="14px"
@@ -110,8 +127,8 @@
               </svg>
             </div>
           </div>
-          <div class="medma-qrre" data-tooltip="Close">
-            <div class="medma-tuxz" @click="clearUpload()">
+          <div class="medma-qrre" data-tooltip="Close" @click="clearUpload()">
+            <div class="medma-tuxz">
               <svg
                 x="0px"
                 y="0px"
@@ -133,8 +150,8 @@
       <div class="medma-werwq">
         <div
           class="medma-aHDs"
-          v-for="(file, i) in uploadFile"
-          v-show="expandFile"
+          v-for="(file, i) in fileUploadForm.uploadFile"
+          v-show="fileUploadForm.expandFile"
         >
           <div
             class="medma-up-content"
@@ -150,7 +167,7 @@
               </div>
             </div>
 
-            <div class="medma-up-action">
+            <div class="medma-up-action action-upload">
               <div
                 class="medma-qrre medma-qXZs"
                 v-if="file.status == 2"
@@ -200,7 +217,7 @@
                 <transition name="hover">
                   <div class="medma-tuxz" v-show="!file.hovered">
                     <div class="dial">
-                      <div class="dial__progress" ref="progress"></div>
+                      <div class="dial__progress upload-progress"></div>
                       <div class="dial__progress_bg" data-percent="100"></div>
                       <div class="dial__content"></div>
                     </div>
@@ -254,7 +271,12 @@
         </div>
       </div>
     </div>
-    <div class="medma-detail-image" v-show="detail" ref="medma_detail">
+    <div
+      class="medma-detail-image"
+      ref="medma_detail"
+      style="opacity: 0; display: none;"
+    >
+      <div class="" v-if="!detail"></div>
       <div class="medma-XZ-HAS" v-if="detail">
         <div class="medma-ZVaS">
           <div class="medma-xxzd">
@@ -287,7 +309,7 @@
                 />
               </svg>
             </button>
-            <button class="dashicons" @click="detail = false">
+            <button class="dashicons" @click="closeDetail">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
@@ -305,7 +327,11 @@
         <transition :name="transition">
           <div class="medma-vXZd" v-if="file.unique">
             <div class="medma-LkXa">
-              <img :src="file.url" alt="" class="medma-vmxZ" />
+              <img
+                :src="file.url.maxresdefault"
+                :alt="file.alt"
+                class="medma-vmxZ"
+              />
             </div>
             <div class="medma-XAvz">
               <div class="medma-Xadf">
@@ -333,27 +359,35 @@
               <div class="medma-Vx-xss">
                 <div class="medma-Gzdf">
                   <strong>Title</strong>
-                  <input type="text" class="medma-dffs" v-model="file.title" />
+                  <input
+                    type="text"
+                    class="medma-control"
+                    v-model="file.title"
+                  />
                 </div>
                 <div class="medma-Gzdf">
                   <strong>Caption / Alt</strong>
-                  <textarea class="medma-dffs" v-model="file.alt"></textarea>
+                  <textarea class="medma-control" v-model="file.alt"></textarea>
                 </div>
                 <div class="medma-Gzdf">
                   <strong>Source</strong>
-                  <input type="text" class="medma-dffs" v-model="file.source" />
+                  <input
+                    type="text"
+                    class="medma-control"
+                    v-model="file.source"
+                  />
                 </div>
                 <div class="medma-Gzdf">
                   <strong>Uploaded By</strong>
-                  <input type="text" class="medma-dffs" disabled />
+                  <input type="text" class="medma-control" disabled />
                 </div>
                 <div class="medma-Gzdf">
                   <strong>Link</strong>
                   <input
                     type="text"
-                    class="medma-dffs"
+                    class="medma-control"
                     readonly
-                    v-model="file.url"
+                    v-model="file.url.original"
                   />
                 </div>
               </div>
@@ -361,7 +395,7 @@
                 <button
                   type="button"
                   class="button-link delete-attachment"
-                  @click="deleteAttachment(file.unique)"
+                  @click="deleteAttachment(file.unique, false)"
                   ref="delete"
                 >
                   Delete Permanently
@@ -390,46 +424,203 @@
         </transition>
       </div>
     </div>
+    <div
+      class="medma-right-click-menu"
+      tabindex="-1"
+      ref="contextmenu"
+      id="contextmenu"
+      v-show="contextmenu"
+    >
+      <div v-if="contextmenu" ref="contextmenuContent">
+        <div
+          class="medma-nN-DD"
+          v-on:click.left="
+            getImageDetail(
+              $refs.contextmenu.dataset.index,
+              $refs.contextmenu.dataset.unique
+            )
+          "
+        >
+          <div class="medma-BDfd">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M12.015 7c4.751 0 8.063 3.012 9.504 4.636-1.401 1.837-4.713 5.364-9.504 5.364-4.42 0-7.93-3.536-9.478-5.407 1.493-1.647 4.817-4.593 9.478-4.593zm0-2c-7.569 0-12.015 6.551-12.015 6.551s4.835 7.449 12.015 7.449c7.733 0 11.985-7.449 11.985-7.449s-4.291-6.551-11.985-6.551zm-.015 5c1.103 0 2 .897 2 2s-.897 2-2 2-2-.897-2-2 .897-2 2-2zm0-2c-2.209 0-4 1.792-4 4 0 2.209 1.791 4 4 4s4-1.791 4-4c0-2.208-1.791-4-4-4z"
+              />
+            </svg>
+          </div>
+          <div class="medma-Mx-df">
+            View
+          </div>
+        </div>
+        <div
+          class="medma-nN-DD"
+          @click="downloadFile($refs.contextmenu.dataset.unique)"
+        >
+          <div class="medma-BDfd">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M12 21l-8-9h6v-12h4v12h6l-8 9zm9-1v2h-18v-2h-2v4h22v-4h-2z"
+              />
+            </svg>
+          </div>
+          <div class="medma-Mx-df">
+            Download
+          </div>
+        </div>
+        <div class="medma-nN-DD" @click="deleteAttachment(fileChoosed, true)">
+          <div class="medma-BDfd">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M9 19c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm4 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm4 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm5-17v2h-20v-2h5.711c.9 0 1.631-1.099 1.631-2h5.315c0 .901.73 2 1.631 2h5.712zm-3 4v16h-14v-16h-2v18h18v-18h-2z"
+              />
+            </svg>
+          </div>
+          <div class="medma-Mx-df">
+            Delete
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="Xh-FSd" id="questionpopup" style="display: none;">
+      <div class="bA-Bd">
+        <div class="Xc-nV">
+          <div class="aB-Hnd">
+            Batalkan semua upload?
+          </div>
+          <button class="Kl-mn">
+            <svg
+              class="a-qd-va"
+              x="0px"
+              y="0px"
+              width="10px"
+              height="10px"
+              viewBox="0 0 10 10"
+              focusable="false"
+            >
+              <polygon
+                class="a-s-fa-Ha-pa"
+                fill="#000000"
+                points="10,1.01 8.99,0 5,3.99 1.01,0 0,1.01 3.99,5 0,8.99 1.01,10 5,6.01 8.99,10 10,8.99 6.01,5 "
+              ></polygon>
+            </svg>
+          </button>
+        </div>
+        <div class="gH-Fd">
+          Upload Anda tidak selesai. Anda ingin membatalkan upload?
+        </div>
+        <div class="kN-Bw">
+          <button
+            class="medma-button button-blue button-no-outline"
+            type="button"
+          >
+            Lanjutkan Upload
+          </button>
+          <button
+            class="medma-button button-no-outline"
+            type="button"
+            @click="clearUpload(false)"
+          >
+            Batalkan Upload
+          </button>
+        </div>
+      </div>
+    </div>
   </section>
 </template>
 
 <script>
+Vue.component('infinite-loading', require('vue-infinite-loading').default);
 import axios from "axios";
 const CancelToken = axios.CancelToken;
 const source = CancelToken.source();
 export default {
   data() {
     return {
+        page: 1,
       files: [],
-      fetchFiles: [],
-      listFiles: [],
-      expandFile: true,
-      uploadFile: [],
+      listFiles: {
+          data: []
+      },
+      fileUploadForm: {
+        text: "",
+        success: 0,
+        expandFile: true,
+        uploadFile: []
+      },
       detail: false,
+      transition: "",
       file: {},
-      hovered: [],
-      progress: [],
-      successed: 0,
-      transition: ""
+      fileChoosed: [],
+      contextmenu: false,
+      multiple: false,
+      search: ""
     };
   },
+  computed: {
+    listingFiles() {
+          return this.listFiles.data
+          // .filter(e => {
+          //     return e.name.toLowerCase().match(new RegExp(this.search.toLowerCase()))
+          // })
+    }
+  },
   methods: {
+    orderBy(sorKey) {
+      this.sortKey = sorKey;
+      this.sortSettings[sorKey] = !this.sortSettings[sorKey];
+      this.desc = this.sortSettings[sorKey];
+    },
     mouseover(i) {
-      this.uploadFile[i].hovered = true;
+      this.fileUploadForm.uploadFile[i].hovered = true;
     },
     mouseleave(i) {
-      this.uploadFile[i].hovered = false;
+      this.fileUploadForm.uploadFile[i].hovered = false;
     },
-    closeDetails() {},
-    getListFiles() {
-      axios.get("/media/all").then(e => {
-        this.listFiles = e.data;
-      }).catch(({response: {status, statusText}}) => {
-          if(status == 500){
-              return this.$toast.error(statusText)
+    infiniteHandler($state) {
+        let url = '/media/all?page='+this.page
+      this.$axios
+        .get(url)
+        .then(e => {
+                e.data.data.forEach(e => this.listFiles.data.push(e))
+                this.listFiles.next_page_url = e.data.next_page_url
+                this.listFiles.last_page_url = e.data.last_page_url
+                this.listFiles.prev_page_url = e.data.prev_page_url
+                this.listFiles.current_page = e.data.current_page
+                this.listFiles.from = e.data.from
+                this.listFiles.last_page = e.data.last_page
+                this.listFiles.per_page = e.data.per_page
+                this.listFiles.to = e.data.to
+                this.listFiles.total = e.data.total
+                $state.loaded()
+                if(this.listFiles.last_page == this.page){
+                    $state.complete()
+                }
+                this.page += 1
+        })
+        .catch(({ response: { status, statusText, data } }) => {
+          if (status == 500) {
+            return this.$toast.error(statusText);
           }
-          this.$toast.error(data)
-      })
+          Object.keys(data).forEach(e => {
+            this.$toast.error(data[e]);
+          });
+        });
+
     },
     onClickInputFile() {
       return this.$refs.inputFile.click();
@@ -459,7 +650,7 @@ export default {
       const FData = new FormData();
       FData.append("file", file);
 
-      axios
+      this.$axios
         .post("/media/upload", FData, {
           headers: {
             "Content-Type": "multipart/form-data`"
@@ -468,27 +659,36 @@ export default {
             let progress = Math.round(
               (progressEvent.loaded * 100) / progressEvent.total
             );
-            this.$refs.progress[i].setAttribute("data-percent", progress);
+            // let upAct = document.getElementsByClassName('action-upload')
+            let upAct = document
+              .getElementsByClassName("action-upload")
+              [i].getElementsByClassName("upload-progress");
+            if (upAct) {
+              upAct[0].setAttribute("data-percent", progress);
+            }
           },
           cancelToken: new CancelToken(function executor(c) {
             cancel = c;
           })
         })
         .then(e => {
-          this.uploadFile[i].status = 2;
-          this.listFiles.push(e.data);
-          this.successed += 1;
+          this.fileUploadForm.uploadFile[i].status = 2;
+          this.listFiles.data.push(e.data);
+          this.fileUploadForm.success += 1;
+          let text = " Upload Selesai";
+          this.fileUploadForm.text = this.fileUploadForm.success + text;
         })
-        .catch(({response: {status, statusText}}) => {
-            this.$refs.saveLoader.style.visibility = "hidden";
-            if(status == 500){
-                return this.$toast.error(statusText)
-            }
-            this.$toast.error(data)
-            this.uploadFile[i].status = 3;
-        })
+        .catch(({ response: { status, statusText, data } }) => {
+          if (status == 500) {
+            return this.$toast.error(statusText);
+          }
+          Object.keys(data).forEach(e => {
+            this.$toast.error(data[e]);
+          });
+          this.fileUploadForm.uploadFile[i].status = 3;
+        });
       if (multiple) {
-        this.uploadFile.push({
+        this.fileUploadForm.uploadFile.push({
           name: file.name,
           type: this.getIconsTypeFile(file.type),
           status: 1,
@@ -496,25 +696,49 @@ export default {
           hovered: false
         });
       } else {
-        this.uploadFile[i].status = 1;
-        this.uploadFile[i].name = file.name;
-        this.uploadFile[i].type = this.getIconsTypeFile(file.type);
-        this.uploadFile[i].abort = cancel;
-        this.uploadFile[i].hovered = false;
+        this.fileUploadForm.uploadFile[i].status = 1;
+        this.fileUploadForm.uploadFile[i].name = file.name;
+        this.fileUploadForm.uploadFile[i].type = this.getIconsTypeFile(
+          file.type
+        );
+        this.fileUploadForm.uploadFile[i].abort = cancel;
+        this.fileUploadForm.uploadFile[i].hovered = false;
       }
     },
     abortRequest(file) {
       file.abort();
       file.status = 0;
     },
-    clearUpload() {
-      this.uploadFile.map(e => {
-        if (e.status == 1) {
-          e.abort();
-        }
-      });
-      this.files = [];
-      this.uploadFile = [];
+    clearUpload(isCheck = true) {
+      let question = document.getElementById("questionpopup");
+      if (isCheck) {
+        question.style.opacity = 0;
+        this.fileUploadForm.uploadFile.map(e => {
+          if (e.status == 1) {
+            setTimeout(() => {
+              question.style.opacity = 1;
+              question.style.display = "flex";
+            }, 200);
+            // e.abort();
+          } else {
+            this.fileUploadForm.uploadFile = [];
+            this.files = [];
+          }
+        });
+      }
+      if (!isCheck) {
+        this.fileUploadForm.uploadFile.map(e => {
+          if (e.status == 1) {
+            setTimeout(() => {
+              question.style.opacity = 1;
+              question.style.display = "none";
+            }, 200);
+            e.abort();
+          }
+        });
+        this.fileUploadForm.uploadFile = [];
+        this.files = [];
+      }
     },
     getIconsTypeFile(type) {
       if (type.match("image.*")) {
@@ -528,61 +752,81 @@ export default {
       }
       return "https://drive-thirdparty.googleusercontent.com/16/type/application/octet-stream";
     },
-    selected(j, $event) {
-      if ($event.shiftKey && $event.ctrlKey && $event.dblclick) return;
+    selected(j) {
       let thumblist = this.$refs.thumbnail;
-      for (var i = 0; i < thumblist.length; i++) {
-        let contain = thumblist[i].classList.contains("medma-zs-XAd");
-
-        if (contain && i != j) thumblist[i].classList.remove("medma-zs-XAd");
-      }
-      if (thumblist[j].classList.contains("medma-zs-XAd")) {
-        thumblist[j].classList.remove("medma-zs-XAd");
-      } else {
-        thumblist[j].classList.add("medma-zs-XAd");
-      }
-    },
-    multiSelected(i) {
-      let thumblist = this.$refs.thumbnail;
-      if (thumblist[i].classList.contains("medma-zs-XAd")) {
-        return thumblist[i].classList.remove("medma-zs-XAd");
-      } else {
-        thumblist[i].classList.add("medma-zs-XAd");
-      }
-    },
-    getImageDetail(file, j) {
-      let thumblist = this.$refs.thumbnail;
+      this.fileChoosed = [
+        { [thumblist[j].dataset.index]: thumblist[j].dataset.unique }
+      ];
       for (var i = 0; i < thumblist.length; i++) {
         let contain = thumblist[i].classList.contains("medma-zs-XAd");
 
         if (contain && i != j) thumblist[i].classList.remove("medma-zs-XAd");
       }
       thumblist[j].classList.add("medma-zs-XAd");
-      axios.get("/media/" + file.unique).then(e => {
-        this.file = e.data;
-        this.openPopup();
-      }).catch(({response: {status, statusText}}) => {
-          if(status == 500){
-              return this.$toast.error(statusText)
+    },
+    multiSelected(i) {
+      let thumblist = this.$refs.thumbnail;
+      let fileC = this.fileChoosed;
+      if (thumblist[i].classList.contains("medma-zs-XAd")) {
+        this.fileChoosed = fileC.filter(e => {
+          if (e != thumblist[i].dataset.unique) {
+            return e;
           }
-          this.$toast.error(data)
-      })
+        });
+        return thumblist[i].classList.remove("medma-zs-XAd");
+      } else {
+        this.fileChoosed.push({
+          [thumblist[i].dataset.index]: thumblist[i].dataset.unique
+        });
+        thumblist[i].classList.add("medma-zs-XAd");
+      }
+      // console.log(this.fileChoosed);
+    },
+    getImageDetail(i, file) {
+      if (this.multiple) return false;
+      let unique = typeof file == "object" ? file.unique : file;
+      this.selected(i, unique);
+      this.$axios
+        .get("/media/" + unique + "?size=maxresdefault")
+        .then(e => {
+          this.file = e.data;
+          this.openPopup();
+          this.contextmenu = false;
+        })
+        .catch(({ response: { status, statusText, data } }) => {
+          if (status == 500) {
+            return this.$toast.error(statusText);
+          }
+          Object.keys(data).forEach(e => {
+            this.$toast.error(data[e]);
+          });
+        });
     },
     openPopup() {
       this.detail = true;
 
       if (this.detail) {
-        let popup = this.$refs.medma_detail.classList;
+        let body = document.querySelector("body > div[id=app]").parentElement;
+        body.style.overflow = "hidden";
+        let popup = this.$refs.medma_detail;
+        popup.style.opacity = 1;
+        popup.style.display = "flex";
         document.addEventListener("click", e => {
-          if (e.target.classList == popup) {
-              this.file = {}
+          if (e.target.classList == popup.classList) {
+            body.style.overflow = "auto";
+            this.file = {};
             this.detail = false;
+            popup.style.opacity = 0;
+            popup.style.display = "none";
           }
         });
         document.addEventListener("keyup", e => {
           if (e.code == "Escape") {
-              this.file = {}
+            body.style.overflow = "auto";
+            this.file = {};
             this.detail = false;
+            popup.style.opacity = 0;
+            popup.style.display = "none";
           }
           if (e.code == "ArrowRight") {
             this.moveImageWithArrow("right");
@@ -595,44 +839,48 @@ export default {
     },
     updateDescription(unique) {
       this.$refs.saveLoader.style.visibility = "visible";
-      axios.put("/media/" + unique, this.file).then(({ data }) => {
-        this.file = data.data;
-        const {
-          data: { name, id, mime, unique, url }
-        } = data;
-        let index = this.listFiles.findIndex(e => {
-          if (e.unique == unique) {
-            return e;
-          }
-        });
-        this.listFiles[index] = {
-          name,
-          id,
-          unique,
-          thumbnailUrl: url + "?s=thumbnail",
-          mime
-        };
-        this.$refs.saveLoader.style.visibility = "hidden";
-        this.$toast.success(data.message);
-      })
-      .catch(({response: {status, statusText}}) => {
+      this.$axios
+        .put("/media/" + unique, this.file)
+        .then(({ data }) => {
+          this.file = data.data;
+          const {
+            data: { name, id, mime, unique, url }
+          } = data;
+          let index = this.listFiles.data.findIndex(e => {
+            if (e.unique == unique) {
+              return e;
+            }
+          });
+          this.listFiles.data[index] = {
+            name,
+            id,
+            unique,
+            url,
+            mime
+          };
           this.$refs.saveLoader.style.visibility = "hidden";
-          if(status == 500){
-              return this.$toast.error(statusText)
+          this.$toast.success(data.message);
+        })
+        .catch(({ response: { status, statusText, data } }) => {
+          this.$refs.saveLoader.style.visibility = "hidden";
+          if (status == 500) {
+            return this.$toast.error(statusText);
           }
-          this.$toast.error(data)
-      })
+          Object.keys(data).forEach(e => {
+            this.$toast.error(data[e]);
+          });
+        });
     },
     moveImageWithArrow(arrow) {
       if (!arrow) return false;
-      let index = this.listFiles.findIndex(e => {
+      let index = this.listFiles.data.findIndex(e => {
         if (e.unique == this.file.unique) {
           return e;
         }
       });
       if (arrow == "right") {
         this.transition = "slide-right";
-        if (index + 1 >= this.listFiles.length) {
+        if (index + 1 >= this.listFiles.data.length) {
           index = 0;
         } else {
           index = index + 1;
@@ -641,46 +889,136 @@ export default {
       if (arrow == "left") {
         this.transition = "slide-left";
         if (index - 1 <= 0) {
-          index = this.listFiles.length - 1;
+          index = this.listFiles.data.length - 1;
         } else {
           index = index - 1;
         }
       }
       this.file = {};
-      axios.get("/media/" + this.listFiles[index].unique).then(e => {
-        setTimeout(() => {
-          this.file = e.data;
-        }, 300);
-      }).catch(({response: {status, statusText}}) => {
-          if(status == 500){
-              return this.$toast.error(statusText)
+      this.$axios
+        .get("/media/" + this.listFiles.data[index].unique)
+        .then(e => {
+          setTimeout(() => {
+            this.file = e.data;
+          }, 300);
+        })
+        .catch(({ response: { status, statusText, data } }) => {
+          if (status == 500) {
+            return this.$toast.error(statusText);
           }
-          this.$toast.error(data)
-      })
+          Object.keys(data).forEach(e => {
+            this.$toast.error(data[e]);
+          });
+        });
     },
-    deleteAttachment(unique) {
-      let index = this.listFiles.findIndex(e => {
-        if (e.unique == unique) {
-          return e;
+    deleteAttachment(unique, context) {
+      if (!context) {
+        this.$refs.deleteLoader.style.visibility = "visible";
+      }
+      setTimeout(() => {
+        this.$axios
+          .delete("/media/delete", {
+            data: { uniques: unique }
+          })
+          .then(e => {
+            this.fileChoosed.map(e => {
+              this.$refs.thumbnail[Object.keys(e)[0]].classList.remove(
+                "medma-zs-XAd"
+              );
+              this.listFiles.data.splice(Object.keys(e)[0], 1);
+            });
+            this.fileChoosed = [];
+            if (!context) {
+              this.detail = false;
+              this.$refs.deleteLoader.style.visibility = "hidden";
+            }
+            if (context) {
+              this.contextmenu = false;
+            }
+          })
+          .catch(({ response: { status, statusText, data } }) => {
+            if (!context) {
+              this.$refs.deleteLoader.style.visibility = "hidden";
+            }
+            if (context) {
+              this.contextmenu = false;
+            }
+            if (status == 500) {
+              return this.$toast.error(statusText);
+            }
+            Object.keys(data).forEach(e => {
+              this.$toast.error(data[e]);
+            });
+          });
+      }, 1000);
+    },
+    setContextMenu(top, left) {
+      let context = document.getElementById("contextmenu");
+      let contextHeight = this.$refs.contextmenuContent.offsetHeight + 30;
+      let contextWidth = context.offsetWidth;
+      let windowHeight = window.innerHeight;
+      let windowWidth = window.innerWidth;
+      let lefts = windowWidth - contextWidth;
+      let largestHeight = window.innerHeight - context.offsetHeight - 25;
+      let largestWidth = window.innerWidth - context.offsetWidth - 25;
+      this.$refs.contextmenu.style.opacity = 1;
+      if (windowWidth - left <= contextWidth + 30) {
+        left = left - contextWidth;
+      }
+      if (windowHeight - top <= contextHeight) {
+        top = top - contextHeight;
+      }
+      if (windowHeight - 1 == top + contextHeight) {
+        top = top - 20;
+      }
+      context.style.top = top + "px";
+      context.style.left = left + "px";
+      context.style.height = contextHeight + "px";
+    },
+    openContextMenu(i, e, file) {
+      let context = document.getElementById("contextmenu");
+      context.dataset.unique = file.unique;
+      context.dataset.index = i;
+      context.style.height = 0;
+      this.fileChoosed.length > 1 ? "" : this.selected(i);
+      document.addEventListener("mousedown", e => {
+        if (!context.contains(e.target) && this.contextmenu) {
+          this.contextmenu = false;
         }
       });
-      this.$refs.deleteLoader.style.visibility = "visible";
       setTimeout(() => {
-        axios
-          .delete("/media/" + unique)
-          .then(e => {
-            this.listFiles.splice(index, 1);
-            this.detail = false;
-            this.$refs.deleteLoader.style.visibility = "hidden";
-          })
-          .catch(({response: {status, statusText}}) => {
-              this.$refs.deleteLoader.style.visibility = "hidden";
-              if(status == 500){
-                  return this.$toast.error(statusText)
-              }
-              this.$toast.error(data)
-          })
-      }, 1000);
+        this.contextmenu = true;
+        Vue.nextTick(
+          function() {
+            //
+            this.setContextMenu(e.y, e.x);
+          }.bind(this)
+        );
+      }, 100);
+    },
+    closeDetail() {
+      this.detail = false;
+      this.file = false;
+      let body = document.querySelector("body > div[id=app]").parentElement;
+      body.style.overflow = "auto";
+      this.$refs.medma_detail.style.opacity = 0;
+      this.$refs.medma_detail.style.display = "none";
+    },
+    downloadFile(unique) {
+      this.$axios
+        .post("/media/d/file/download", {
+          uniques: this.fileChoosed
+        })
+        .then(e => {
+          window.location.href = e.data.url;
+          this.contextmenu = false;
+        });
+    },
+    filterSearch(value) {
+      this.listFiles.data = this.listFiles.data.filter(e => {
+        var regex = new RegExp(value, "g");
+        return e.name.match(regex);
+      });
     }
   },
   filters: {
@@ -689,8 +1027,19 @@ export default {
     }
   },
   mounted() {
-    this.getListFiles();
-  }
+    document.addEventListener("keydown", e => {
+      if (e.key == "Shift") {
+        this.multiple = true;
+      }
+    });
+    document.addEventListener("keyup", e => {
+      if (e.key == "Shift") {
+        this.multiple = false;
+      }
+    });
+    let infinite = document.getElementsByClassName('infinite-loading-container')[0]
+    infinite.removeChild(infinite.children[2]);
+},
 };
 </script>
 
