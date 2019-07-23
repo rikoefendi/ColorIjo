@@ -1,0 +1,1185 @@
+@import '../../node_modules/vue-toast-notification/dist/index.css';
+/* cyrillic-ext */
+@font-face {
+    font-family: 'Roboto';
+    font-style: italic;
+    font-weight: 400;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOkCnqEu92Fr1Mu51xFIzIFKw.woff2") format('woff2');
+    unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+    font-family: 'Roboto';
+    font-style: italic;
+    font-weight: 400;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOkCnqEu92Fr1Mu51xMIzIFKw.woff2") format('woff2');
+    unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+    font-family: 'Roboto';
+    font-style: italic;
+    font-weight: 400;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOkCnqEu92Fr1Mu51xEIzIFKw.woff2") format('woff2');
+    unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+    font-family: 'Roboto';
+    font-style: italic;
+    font-weight: 400;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOkCnqEu92Fr1Mu51xLIzIFKw.woff2") format('woff2');
+    unicode-range: U+0370-03FF;
+}
+/* vietnamese */
+@font-face {
+    font-family: 'Roboto';
+    font-style: italic;
+    font-weight: 400;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOkCnqEu92Fr1Mu51xHIzIFKw.woff2") format('woff2');
+    unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+    font-family: 'Roboto';
+    font-style: italic;
+    font-weight: 400;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOkCnqEu92Fr1Mu51xGIzIFKw.woff2") format('woff2');
+    unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+    font-family: 'Roboto';
+    font-style: italic;
+    font-weight: 400;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOkCnqEu92Fr1Mu51xIIzI.woff2") format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 300;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOlCnqEu92Fr1MmSU5fCRc4EsA.woff2") format('woff2');
+    unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 300;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOlCnqEu92Fr1MmSU5fABc4EsA.woff2") format('woff2');
+    unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 300;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOlCnqEu92Fr1MmSU5fCBc4EsA.woff2") format('woff2');
+    unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 300;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOlCnqEu92Fr1MmSU5fBxc4EsA.woff2") format('woff2');
+    unicode-range: U+0370-03FF;
+}
+/* vietnamese */
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 300;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOlCnqEu92Fr1MmSU5fCxc4EsA.woff2") format('woff2');
+    unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 300;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOlCnqEu92Fr1MmSU5fChc4EsA.woff2") format('woff2');
+    unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 300;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOlCnqEu92Fr1MmSU5fBBc4.woff2") format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOmCnqEu92Fr1Mu72xKOzY.woff2") format('woff2');
+    unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOmCnqEu92Fr1Mu5mxKOzY.woff2") format('woff2');
+    unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOmCnqEu92Fr1Mu7mxKOzY.woff2") format('woff2');
+    unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOmCnqEu92Fr1Mu4WxKOzY.woff2") format('woff2');
+    unicode-range: U+0370-03FF;
+}
+/* vietnamese */
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOmCnqEu92Fr1Mu7WxKOzY.woff2") format('woff2');
+    unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOmCnqEu92Fr1Mu7GxKOzY.woff2") format('woff2');
+    unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOmCnqEu92Fr1Mu4mxK.woff2") format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 500;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOlCnqEu92Fr1MmEU9fCRc4EsA.woff2") format('woff2');
+    unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 500;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOlCnqEu92Fr1MmEU9fABc4EsA.woff2") format('woff2');
+    unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 500;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOlCnqEu92Fr1MmEU9fCBc4EsA.woff2") format('woff2');
+    unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 500;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOlCnqEu92Fr1MmEU9fBxc4EsA.woff2") format('woff2');
+    unicode-range: U+0370-03FF;
+}
+/* vietnamese */
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 500;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOlCnqEu92Fr1MmEU9fCxc4EsA.woff2") format('woff2');
+    unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 500;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOlCnqEu92Fr1MmEU9fChc4EsA.woff2") format('woff2');
+    unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 500;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOlCnqEu92Fr1MmEU9fBBc4.woff2") format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOlCnqEu92Fr1MmWUlfCRc4EsA.woff2") format('woff2');
+    unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOlCnqEu92Fr1MmWUlfABc4EsA.woff2") format('woff2');
+    unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOlCnqEu92Fr1MmWUlfCBc4EsA.woff2") format('woff2');
+    unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOlCnqEu92Fr1MmWUlfBxc4EsA.woff2") format('woff2');
+    unicode-range: U+0370-03FF;
+}
+/* vietnamese */
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOlCnqEu92Fr1MmWUlfCxc4EsA.woff2") format('woff2');
+    unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOlCnqEu92Fr1MmWUlfChc4EsA.woff2") format('woff2');
+    unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    src: url("//fonts.gstatic.com/s/roboto/v18/KFOlCnqEu92Fr1MmWUlfBBc4.woff2") format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic */
+@font-face {
+    font-family: 'Google Sans';
+    font-style: normal;
+    font-weight: 400;
+    src: url("//fonts.gstatic.com/s/googlesans/v14/4UaGrENHsxJlGDuGo1OIlL3Kwp5MKg.woff2") format('woff2');
+    unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+    font-family: 'Google Sans';
+    font-style: normal;
+    font-weight: 400;
+    src: url("//fonts.gstatic.com/s/googlesans/v14/4UaGrENHsxJlGDuGo1OIlL3Nwp5MKg.woff2") format('woff2');
+    unicode-range: U+0370-03FF;
+}
+/* vietnamese */
+@font-face {
+    font-family: 'Google Sans';
+    font-style: normal;
+    font-weight: 400;
+    src: url("//fonts.gstatic.com/s/googlesans/v14/4UaGrENHsxJlGDuGo1OIlL3Bwp5MKg.woff2") format('woff2');
+    unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+    font-family: 'Google Sans';
+    font-style: normal;
+    font-weight: 400;
+    src: url("//fonts.gstatic.com/s/googlesans/v14/4UaGrENHsxJlGDuGo1OIlL3Awp5MKg.woff2") format('woff2');
+    unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+    font-family: 'Google Sans';
+    font-style: normal;
+    font-weight: 400;
+    src: url("//fonts.gstatic.com/s/googlesans/v14/4UaGrENHsxJlGDuGo1OIlL3Owp4.woff2") format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic */
+@font-face {
+    font-family: 'Google Sans';
+    font-style: normal;
+    font-weight: 500;
+    src: url("//fonts.gstatic.com/s/googlesans/v14/4UabrENHsxJlGDuGo1OIlLU94Yt3CwZ-Pw.woff2") format('woff2');
+    unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+    font-family: 'Google Sans';
+    font-style: normal;
+    font-weight: 500;
+    src: url("//fonts.gstatic.com/s/googlesans/v14/4UabrENHsxJlGDuGo1OIlLU94YtwCwZ-Pw.woff2") format('woff2');
+    unicode-range: U+0370-03FF;
+}
+/* vietnamese */
+@font-face {
+    font-family: 'Google Sans';
+    font-style: normal;
+    font-weight: 500;
+    src: url("//fonts.gstatic.com/s/googlesans/v14/4UabrENHsxJlGDuGo1OIlLU94Yt8CwZ-Pw.woff2") format('woff2');
+    unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+    font-family: 'Google Sans';
+    font-style: normal;
+    font-weight: 500;
+    src: url("//fonts.gstatic.com/s/googlesans/v14/4UabrENHsxJlGDuGo1OIlLU94Yt9CwZ-Pw.woff2") format('woff2');
+    unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+    font-family: 'Google Sans';
+    font-style: normal;
+    font-weight: 500;
+    src: url("//fonts.gstatic.com/s/googlesans/v14/4UabrENHsxJlGDuGo1OIlLU94YtzCwY.woff2") format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+.medma-section {
+    font-family: Roboto,RobotoDraft,Helvetica,Arial,sans-serif;
+    padding: 3rem 1.5rem;
+}
+
+.medma-panel {
+    display: flex;
+    flex: 1;
+    border: 1px solid #dadce0;
+    border-radius: 6px;
+    padding: 0.75rem;
+}
+
+.medma-upload-input {}
+
+.medma-filter {
+    flex-grow: 1;
+    flex-shrink: 0;
+    align-items: stretch;
+    display: flex;
+}
+
+div.medma-filter-form {
+    justify-content: flex-end;
+    align-items: stretch;
+    margin-left: auto;
+    display: flex;
+}
+
+div.medma-filter-form > * {
+    margin-left: 0.75rem;
+    margin-right: 0.75rem;
+}
+
+div.medma-filter-form > *:first-child {
+    margin-left: none;
+}
+
+div.medma-filter-form > *:last-child {
+    margin-right: none;
+}
+
+.medma-up {
+    transition: opacity 0.2s;
+    width: 360px;
+    position: fixed;
+    bottom: 2rem;
+    right: 3%;
+    transition: 1s ease;
+}
+
+.medma-up-header {
+    -webkit-border-radius: 3px 3px 0 0;
+    border-radius: 3px 3px 0 0;
+    -webkit-align-items: center;
+    align-items: center;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    background-color: #323232;
+    border: 1px transparent solid;
+    bottom: 24px;
+    color: #fff;
+    font-size: 14px;
+    height: 52px;
+    line-height: normal;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+}
+
+.memda-up-title {
+    margin-left: 0.75rem;
+    font-weight: 500;
+}
+
+.medma-up-action {
+    justify-content: flex-end;
+    align-items: stretch;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+}
+
+.medma-werwq {
+    background-color: #fff;
+    max-height: 240px;
+    min-width: 360px;
+    overflow: auto;
+    position: relative;
+    width: 360px;
+}
+
+.medma-up-content {
+    background-color: #fff;
+    position: relative;
+    width: 100%;
+    display: flex;
+    padding: 6px 2px 6px 0;
+}
+
+.medma-upc-content {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: calc(100% - 54px);
+}
+
+.medma-upc-icon {
+    margin: 0 18px;
+}
+
+.medma-upc-title {
+    -webkit-align-self: center;
+    align-self: center;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-box-flex: 1 1 auto;
+    -webkit-flex: 1 1 auto;
+    flex: 1 1 auto;
+    font-weight: 500;
+    overflow: hidden;
+    position: relative;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.medma-qrre {
+    border: 1px solid transparent;
+    box-sizing: border-box;
+    cursor: pointer;
+    display: inline-block;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 200ms cubic-bezier(0.4,0.0,0.2,1),background 200ms cubic-bezier(0.4,0.0,0.2,1),box-shadow 400ms cubic-bezier(0.4,0.0,0.2,1);
+    border-radius: 50%;
+    min-width: 0;
+    overflow: visible;
+    height: 40px;
+    width: 40px;
+    margin: 0 2px;
+    position: relative;
+}
+
+.medma-qrre:hover {
+    background-color: rgba(255,255,255, .12);
+}
+
+.medma-qXZs:hover {
+    background: rgba(0,0,0,0.12);
+}
+
+.medma-tuxz {
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    line-height: 0;
+}
+
+.medma-XzZs {
+    height: 5px;
+    width: 100%;
+    background-color: #ccc;
+    margin: 0 16px;
+    display: flex;
+}
+
+.medma-aHDs {
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+}
+
+.medma-UtXa {
+    display: flex;
+}
+
+.medma-XaaXA {
+    background-color: #0F9D58;
+    transition: 1s linear;
+}
+
+.medma-columns {
+    display: grid;
+    grid-gap: 0;
+    grid-template-columns: repeat(auto-fill,minmax(220px,1fr));
+}
+
+.medma-column {
+    min-height: 220px;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-flex: 1 1 220px;
+    -webkit-flex: 1 1 220px;
+    flex: 1 1 220px;
+    overflow: hidden;
+    padding: 7px;
+    position: relative;
+    vertical-align: top;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.medma-thumbnail {
+    background-color: #fff;
+    border-radius: 6px;
+    border: 1px solid #dadce0;
+    display: flex;
+    flex: 1 1 auto;
+    overflow: hidden;
+    position: relative;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.medma-zs-XAd {
+    color: #1967d2;
+}
+
+.medma-zs-XAd .medma-caption {
+    background-color: #e8f0fe;
+}
+
+.medma-image {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    overflow: hidden;
+    position: absolute;
+    text-align: center;
+    top: 0;
+    background: #fff;
+}
+
+.medma-image > img {
+    background-repeat: no-repeat;
+    -webkit-background-size: 64px;
+    background-size: 64px;
+    display: inline-block;
+    height: auto;
+    vertical-align: middle;
+    text-align: center;
+    width: 100%;
+}
+
+.medma-caption {
+    bottom: 0;
+    left: 0;
+    display: -webkit-box;
+    display: flex;
+    -webkit-box-flex: 1;
+    flex: 1 1 48px;
+    position: absolute;
+    background: #fff;
+    width: 100%;
+    padding: 12px 16px;
+}
+
+.medma-type {
+    padding-right: 12px;
+    height: 24px;
+    width: 24px;
+    flex: 0 0 auto;
+    display: block;
+    position: relative;
+}
+
+.medma-text {
+    -webkit-align-self: center;
+    align-self: center;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-box-flex: 1 1 auto;
+    -webkit-flex: 1 1 auto;
+    flex: 1 1 auto;
+    font-weight: 500;
+    overflow: hidden;
+    position: relative;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: -webkit-calc(100% - 56px);
+    width: calc(100% - 56px);
+}
+
+.medma-form-container {
+    position: relative;
+    width: 100%;
+    background: #fff;
+    box-sizing: border-box;
+}
+
+.midma-form-upload {
+    border: 2px solid #337ab7;
+    border-style: dashed;
+    padding: 1rem;
+    margin-top: 15px;
+    box-sizing: border-box;
+}
+
+.medma-detail-image {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    position: fixed;
+    background: #262626;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    z-index: 9999;
+    overflow: hidden;
+    transition: opacity 0.5s cubic-bezier(0.74, -0.07, 0.61, 1.22), display 0.5s cubic-bezier(0.74, -0.07, 0.61, 1.22);
+}
+
+.medma-XZ-HAS {
+    border-radius: 5px;
+    width: 90%;
+    height: 90%;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    box-shadow: 0 5px 15px rgba(0,0,0,.7);
+}
+
+.medma-ZVaS {
+    height: 50px;
+    width: 100%;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 6px;
+    cursor: pointer;
+}
+
+.medma-xxzd {
+    font-size: 22px;
+    font-weight: 500;
+}
+
+.medma-Kdad {
+    display: flex;
+}
+
+.dashicons {
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    justify-content: center;
+    border-left: 1px solid #ddd;
+    height: 49px;
+    width: 50px;
+    background: #fff;
+    border-bottom: none;
+    border-right: none;
+    border-top: none;
+}
+
+.dashicons:hover {
+    background-color: #f4f4f4;
+    transition: background 0.5s ease;
+}
+
+.dashicons:hover svg path {
+    fill: #000;
+}
+
+.medma-vXZd {
+    box-shadow: inset 0 4px 4px -4px rgba(0,0,0,.1);
+    width: 100%;
+    height: 100%;
+    display: flex;
+}
+
+.medma-LkXa {
+    width: 70%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+.medma-vmxZ {
+    max-width: 90%;
+    max-height: 90%;
+}
+
+.medma-XAvz {
+    width: 30%;
+    height: 100%;
+    background-color: #f3f3f3;
+    border-left: 1px solid #ddd;
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+.medma-Xadf {
+    margin: 15px;
+    padding-bottom: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.medma-xa-sXd {
+    font-weight: 400;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    padding-right: 15px;
+    text-overflow: ellipsis;
+}
+
+.medma-Vx-xss {
+    margin: 15px;
+    color: #666;
+    font-weight: 400;
+    text-align: left;
+}
+
+.medma-Gzdf {
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    flex-direction: row;
+    margin-top: 15px;
+    width: 100%;
+}
+
+.medma-Gzdf > strong {
+    text-align: right;
+    width: 35%;
+    margin-right: 15px;
+    padding: 6px 0 0;
+}
+
+.medma-button {
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    background-image: none;
+    border-radius: 4px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    width: 100%;
+    padding: 6px 8px;
+    font-size: 100%;
+    border: 1px solid #ddd;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,.07);
+    background-color: #fff;
+    color: #32373c;
+    transition: box-shadow 200ms ease-in;
+}
+.medma-button:focus{
+    box-shadow: inset 0 0 0 1px #66afe9;
+}
+.button-blue{
+    background-color: #4285F4;
+    color: #fff;
+}
+.button-no-outline{
+    outline: none;
+    box-shadow: none;
+    border: none;
+}
+
+.medma-control {
+    width: 100%;
+    padding: 6px 8px;
+    font-size: 100%;
+    border: 1px solid #ddd;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,.07);
+    background-color: #fff;
+    color: #32373c;
+    outline: 0;
+    transition: 50ms border-color ease-in-out;
+    white-space: nowrap;
+}
+
+.medma-control:focus {
+    border-color: #66afe9;
+}
+
+.medma-control:disabled {
+    background-color: #eeeeee;
+    opacity: 1;
+    cursor: not-allowed;
+}
+
+.medma-control[read-only] {
+    background-color: #eeeeee;
+    opacity: 1;
+}
+
+.medma-XV-ss {
+    margin-top: auto;
+    margin-bottom: 20px;
+}
+
+.button-link {
+    background: none;
+    border: none;
+    font-weight: 500;
+    color: #0073aa;
+    display: inline;
+}
+
+.button-link:hover {
+    text-decoration: underline;
+}
+
+.button-link:focus {
+    text-decoration: underline;
+    border: none;
+}
+@mixin progress-slice($step) {
+    & {
+        @extend %progress-slice;
+    }
+    $loops: round(100 / $step);
+    @for $i from 0 through $loops {
+        $pct: $step * $i;
+
+        &[data-percent="#{$pct}"] {
+            &:before {
+                transform: rotate(360deg * $pct / 100);
+            }
+            @if $pct <= 50 {
+                @extend %progress-slice--less-than-or-equal-to-50-percent;
+            } @else {
+                @extend %progress-slice--greater-than-50-percent;
+            }
+        }
+    }
+}
+// Mixin to create color variations of progress slice mixin
+@mixin progress-slice-color($color) {
+    &:after,
+    &:before {
+        background-color: $color;
+    }
+}
+
+%progress-slice {
+    // For performance, it might be better to inline this twice below.
+    position: relative;
+    overflow: hidden;
+
+    &:before {
+        content: "";
+        position: absolute;
+        height: 100%;
+        border-top-left-radius: 100% 50%;
+        border-top-right-radius: 0 0;
+        border-bottom-right-radius: 0 0;
+        border-bottom-left-radius: 100% 50%;
+        transform-origin: right center;
+    }
+}
+
+%progress-slice--less-than-or-equal-to-50-percent {
+    width: 50%;
+    height: 100%;
+    left: 50%;
+    transform-origin: left center;
+
+    &:before {
+        left: -100%;
+        width: 100%;
+    }
+}
+
+%progress-slice--greater-than-50-percent {
+    width: 100%;
+    height: 100%;
+    left: 0;
+    transform-origin: center center;
+
+    &:before {
+        left: 0;
+        width: 50%;
+    }
+
+    &:after {
+        content: "";
+        position: absolute;
+        width: 50%;
+        height: 100%;
+        left: 50%;
+        border-top-left-radius: 0 0;
+        border-top-right-radius: 100% 50%;
+        border-bottom-right-radius: 100% 50%;
+        border-bottom-left-radius: 0 0;
+    }
+}
+///////////////////////////////////////////////////////////////////////
+$color-neutral: #0F9D58;
+$color-content: #fff;
+
+.dial {
+    position: relative;
+    margin: 0 auto;
+    height: 24px;
+    width: 24px;
+}
+
+.dial__progress {
+    @include progress-slice($step:1);
+    @include progress-slice-color($color-neutral);
+}
+
+.dial__progress_bg {
+    background: #ddd;
+    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: -2;
+}
+
+.dial__content {
+    position: absolute;
+    border-radius: 50%;
+    background-color: $color-content;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: 2px;
+    z-index: 1;
+}
+
+.hover-enter-active,
+.hover-leave-active {
+    transition: opacity 0.4s ease-in-out;
+}
+/* .fade-leave-active below version 2.1.8 */
+.hover-enter,
+.hover-leave-to {
+    opacity: 0;
+}
+
+[data-tooltip] {
+    position: relative;
+    z-index: 2;
+    cursor: pointer;
+}
+
+[data-tooltip]:after,
+[data-tooltip]:before {
+    display: none;
+    opacity: 0;
+    pointer-events: none;
+}
+
+[data-tooltip]:before {
+    position: fixed;
+    text-align: center;
+    padding: 4px;
+    border-radius: 2px;
+    background-color: #000;
+    background-color: rgba(51, 51, 51, 0.9);
+    color: #fff;
+    content: attr(data-tooltip);
+    -webkit-box-align: center;
+    font-size: 10px;
+    line-height: 1.2;
+    margin: 0 auto;
+    white-space: nowrap;
+    z-index: 2;
+    transform: translateY(150%);
+}
+/* Show tooltip content on hover */
+[data-tooltip]:hover:after,
+[data-tooltip]:hover:before {
+    display: inline-block;
+    opacity: 1;
+}
+//slide effect
+
+.slide-left-enter-active,
+.slide-left-leave-active,
+.slide-right-enter-active,
+.slide-right-leave-active {
+    transition-duration: 0.5s;
+    transition-property: height, opacity, transform;
+    transition-timing-function: cubic-bezier(0.55, 0, 0.1, 1);
+    overflow: hidden;
+}
+
+.slide-left-enter,
+.slide-right-leave-active {
+    opacity: 0;
+    transform: translate(2em, 0);
+}
+
+.slide-left-leave-active,
+.slide-right-enter {
+    opacity: 0;
+    transform: translate(-2em, 0);
+}
+
+.a-xAVd {
+    width: 70%;
+}
+
+.Xdfs {
+    width: 100%;
+}
+
+.fetch-enter-active,
+.fetch-leave-active {
+    transition: opacity 0.4s ease-in-out;
+}
+/* .fade-leave-active below version 2.1.8 */
+.fetch-enter,
+.fetch-leave-to {
+    opacity: 0;
+}
+
+.medma-right-click-menu {
+    background: #FAFAFA;
+    border: 1px solid #BDBDBD;
+    box-shadow: 0 8px 10px 1px rgba(0,0,0,0.14), 0 3px 14px 2px rgba(0,0,0,0.12), 0 5px 5px -3px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    position: fixed;
+    white-space: nowrap;
+    z-index: 999999;
+    color: #5f6368;
+    font-size: 100%;
+    border-radius: 3px;
+    transition: height 267ms cubic-bezier(0.4,0.0,0.2,1) 0ms,opacity 267ms cubic-bezier(0.4,0.0,0.2,1);
+    will-change: height,margin-top,opacity;
+    outline: 1px solid transparent;
+    opacity: 0;
+    overflow: hidden;
+    justify-content: center;
+}
+
+.medma-nN-DD {
+    display: flex;
+    flex-direction: row;
+    padding: 5px 20px;
+    background: none;
+    cursor: pointer;
+    align-items: center;
+}
+
+.medma-nN-DD:hover {
+    background-color: #eeeeee;
+}
+
+.medma-BDfd {
+    margin-right: 25px;
+}
+
+.medma-BDfd > svg {
+    fill: #5f6368;
+}
+
+.Xh-FSd {
+    @extend .medma-detail-image;
+    background-color: rgba(0, 0, 0, 0.3);
+    align-items: center;
+    text-align: center;
+}
+
+.bA-Bd {
+    padding: 24px;
+    background: #fff;
+}
+.Xc-nV{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    align-items: center;
+}
+.Kl-mn{
+    background: none;
+    border: 1px solid transparent;
+    outline: none;
+    border-radius: 2px;
+    transition: border-color 150ms ease-in;
+}
+.Kl-mn:focus{
+    border-color: #66afe9;
+}
+.aB-Hnd{
+    font-size: 20px;
+}
+.gH-Fd{
+    font-size: 12px;
+}
+.kN-Bw{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+.kN-Bw button{
+    text-transform: uppercase;
+    width: auto;
+    padding: 6px 15px;
+    font-size: 13px;
+    font-weight: 500;
+}

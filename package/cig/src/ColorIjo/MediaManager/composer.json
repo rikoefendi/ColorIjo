@@ -1,0 +1,22 @@
+{
+    "name": "colorijo/media-manager",
+    "description": "Media management for laravel",
+    "type": "library",
+    "require": {
+        "laravel/framework": "5.8.*",
+        "php": "^7.2",
+        "intervention/image": "^2.5",
+        "intervention/imagecache": "^2.3"
+    },
+    "license": "MIT",
+    "authors": [{
+        "name": "Riko Efendi",
+        "email": "rikoefendi100@gmail.com"
+    }],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "ColorIjo\\MediaManager\\": ""
+        }
+    }
+}
