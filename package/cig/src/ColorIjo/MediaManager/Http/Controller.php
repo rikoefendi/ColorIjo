@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManagerStatic as Image;
 use ColorIjo\MediaManager\Model;
 use Illuminate\Support\Facades\Crypt;
+use ColorIjo\MediaManager\Events\FileUploaded;
 use Hash;
 /**
  *
@@ -29,6 +30,7 @@ class Controller extends BaseController
 
     public function list(Request $request)
     {
+
         $fields = $request->field ? explode(',',$request->field) : ['name', 'id', 'mime', 'unique'];
         if($request->field){
             $fieds = explode(',', $request->field);
@@ -49,12 +51,22 @@ class Controller extends BaseController
         return $data;
     }
 
+    public function verifyFile(Request $request)
+    {
+        $query = $request->q;
+        $trueQuery = preg_match("/(title like '[\s\S]*%' and name like '%[\s\S]*')+/", $query);
+        if(!$trueQuery){
+            abort(404);
+        }
+        return Model::whereRaw($query)->get();
+    }
+
     public function store(Request $request)
     {
-        $file = $request->file('file');
-        $mime = $file->getMimeType();
-        $name = $file->getClientOriginalName();
-        $realPath = $file->getRealPath();
+        $data = json_decode($request->getContent(), true);
+        $file = Image::make($data['raw']);
+        $mime = $data['metadata']['type'];
+        $name = $data['metadata']['name'];
         $title = preg_replace('/\\.[^.\\s]{3,4}$/', '', $name);
         // $this->resizeImage($file);
         // //check file is exists
@@ -64,29 +76,30 @@ class Controller extends BaseController
                 'msg' => 'File is exists!!!'
             ], 422);
         }
-        $image = Image::make($realPath);
-        $res = $this->resizeImage($file);
         $model = new Model();
         $model->name = $name;
         $model->mime = $mime;
         $model->title = $title;
         $model->alt = $title;
-        $model->unique = $res['name'];
+        $model->status = 1;
+        $model->unique = uniqid();
         $model->props = json_encode([
-            'file' => $res['size'],
-            'dimensions' => $image->width().'x'.$image->height(),
-            'size' => $file->getSize()
+            'dimensions' => $file->width().'x'.$file->height(),
+            'size' => $file->filesize()
         ]);
-        if($res['size']){
-            $model->save();
-            return [
-                'url' => ['thumb' => env('APP_URL').'/media/d/file/'.$model->unique.'/default.jpg'],
-                'name' => $name,
-                'mime' => $mime,
-                'unique' => $model->unique,
-                'id' => $model->id
-            ];
-        }
+        //save image original to storage
+        Storage::put(config('medma.path').'/original/'.$model->unique, $file->encode('data-url')->encoded);
+        $model->save();
+        //event
+        event(new FileUploaded($model));
+        return [
+            'url' => ['thumb' => env('APP_URL').'/media/d/file/'.$model->unique.'/default.jpg'],
+            'name' => $name,
+            'mime' => $mime,
+            'unique' => $model->unique,
+            'id' => $model->id
+        ];
+        // }
     }
 
     public function show($unique, Request $request)

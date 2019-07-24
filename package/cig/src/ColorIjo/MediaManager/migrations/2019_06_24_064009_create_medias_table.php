@@ -22,6 +22,7 @@ class CreateMediasTable extends Migration
             $table->string('source', 255)->nullable();
             $table->string('alt', 255)->nullable();
             $table->string('mime', 20)->nullable();
+            $table->json('props')->nullable();
             $table->timestamps();
             $table->timestamp('deleted_at')->nullable();
         });

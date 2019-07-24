@@ -78,8 +78,12 @@
             </div>
           </div>
         </div>
-        <div class="medma-column" style="justify-content:center; top: 38%; bottom: 50%;">
-        <infinite-loading @distance="1" @infinite="infiniteHandler"> </infinite-loading>
+        <div
+          class="medma-column"
+          style="justify-content:center; top: 38%; bottom: 50%;"
+        >
+          <infinite-loading @distance="1" @infinite="infiniteHandler">
+          </infinite-loading>
         </div>
       </div>
     </div>
@@ -544,17 +548,16 @@
 </template>
 
 <script>
-Vue.component('infinite-loading', require('vue-infinite-loading').default);
-import axios from "axios";
-const CancelToken = axios.CancelToken;
-const source = CancelToken.source();
+Vue.component("infinite-loading", require("vue-infinite-loading").default);
+import axios from 'axios'
+const CancelToken = axios.CancelToken
 export default {
   data() {
     return {
-        page: 1,
+      page: 1,
       files: [],
       listFiles: {
-          data: []
+        data: []
       },
       fileUploadForm: {
         text: "",
@@ -569,12 +572,12 @@ export default {
       contextmenu: false,
       multiple: false,
       search: "",
-      queeUpload: 0,
+      queeUpload: 0
     };
   },
   computed: {
     listingFiles() {
-          return this.listFiles.data
+      return this.listFiles.data;
     }
   },
   methods: {
@@ -590,25 +593,25 @@ export default {
       this.fileUploadForm.uploadFile[i].hovered = false;
     },
     infiniteHandler($state) {
-        let url = '/media/all?page='+this.page
+      let url = "/media/all?page=" + this.page;
       this.$axios
         .get(url)
         .then(e => {
-                e.data.data.forEach(e => this.listFiles.data.push(e))
-                this.listFiles.next_page_url = e.data.next_page_url
-                this.listFiles.last_page_url = e.data.last_page_url
-                this.listFiles.prev_page_url = e.data.prev_page_url
-                this.listFiles.current_page = e.data.current_page
-                this.listFiles.from = e.data.from
-                this.listFiles.last_page = e.data.last_page
-                this.listFiles.per_page = e.data.per_page
-                this.listFiles.to = e.data.to
-                this.listFiles.total = e.data.total
-                $state.loaded()
-                if(this.listFiles.last_page == this.page){
-                    $state.complete()
-                }
-                this.page += 1
+          e.data.data.forEach(e => this.listFiles.data.push(e));
+          this.listFiles.next_page_url = e.data.next_page_url;
+          this.listFiles.last_page_url = e.data.last_page_url;
+          this.listFiles.prev_page_url = e.data.prev_page_url;
+          this.listFiles.current_page = e.data.current_page;
+          this.listFiles.from = e.data.from;
+          this.listFiles.last_page = e.data.last_page;
+          this.listFiles.per_page = e.data.per_page;
+          this.listFiles.to = e.data.to;
+          this.listFiles.total = e.data.total;
+          $state.loaded();
+          if (this.listFiles.last_page == this.page) {
+            $state.complete();
+          }
+          this.page += 1;
         })
         .catch(({ response: { status, statusText, data } }) => {
           if (status == 500) {
@@ -618,7 +621,6 @@ export default {
             this.$toast.error(data[e]);
           });
         });
-
     },
     onClickInputFile() {
       return this.$refs.inputFile.click();
@@ -630,7 +632,6 @@ export default {
     },
     async fetchingFiles(files) {
       await Array.from(files).forEach((f, i) => {
-          this.files.push(f)
         if (
           !f.type.match("image.*") &&
           !f.type.match("video.*") &&
@@ -639,79 +640,116 @@ export default {
           console.log(`${f.name} is not image`);
           return;
         }
+        this.files.push(f);
         this.fileUploadForm.uploadFile.push({
           name: f.name,
           type: this.getIconsTypeFile(f.type),
           status: 1,
-          abort: '',
+          abort: "",
           hovered: false
         });
       });
       setTimeout(() => {
-          this.uploadingFile(files[this.queeUpload], this.queeUpload)
-      }, 1000)
+        this.uploadingFile(this.files[this.queeUpload], this.queeUpload);
+        console.log(this.files);
+      }, 1000);
     },
-    uploadingFile(file, i) {
-        file = file ? file: this.files[i]
-        console.log(file);
-      const vm = this;
-      let cancel;
-      const FData = new FormData();
-      FData.append("file", file);
-      this.$axios
-        .post("/media/upload", FData, {
-          headers: {
-            "Content-Type": "multipart/form-data`"
-          },
-          onUploadProgress: progressEvent => {
-            let progress = Math.round(
-              (progressEvent.loaded * 100) / progressEvent.total
-            );
-            // let upAct = document.getElementsByClassName('action-upload')
-            let upAct = document
-              .getElementsByClassName("action-upload")
-              [i].getElementsByClassName("upload-progress");
-            if (upAct) {
-              upAct[0].setAttribute("data-percent", progress);
-            }
-          },
-          cancelToken: new CancelToken(function executor(c) {
-            cancel = c;
-          })
-        })
-        .then(e => {
-          this.fileUploadForm.uploadFile[i].status = 2;
-          this.listFiles.data.push(e.data);
-          this.fileUploadForm.success += 1;
-          let text = " Upload Selesai";
-          this.fileUploadForm.text = this.fileUploadForm.success + text;
-          this.queeUpload += 1;
+    async uploadingFile(file, i) {
+      file = file ? file : this.files[i];
+      this.queeUpload += 1;
+      const existed = await this.checkFileIsexists(file)
+      if(existed.length >= 1 && typeof existed == 'object'){
+          this.fileUploadForm.uploadFile[i].status = 3
           if(this.queeUpload < this.files.length){
-              console.log(this.files[this.queeUpload]);
+              this.files[this.queeUpload];
               this.uploadingFile(this.files[this.queeUpload], this.queeUpload)
           }
-        })
-        .catch(({ response }) => {
-            this.queeUpload += 1;
-            if(this.queeUpload < this.files.length){
-                this.uploadingFile(this.files[this.queeUpload], this.queeUpload)
-            }
-          if (response.status == 500) {
-            return this.$toast.error(response.statusText);
+          this.$toast.error('file is Existed')
+      }else{
+          const raw = await this.getContentbinary(file)
+          const data = {
+              metadata: {
+                  name: file.name,
+                  type: file.type,
+              },
+              raw: raw.replace(`data:${file.type};base64,`, '')
           }
-          Object.keys(response.data).forEach(e => {
-            this.$toast.error(response.data[e]);
-          });
-          this.fileUploadForm.uploadFile[i].status = 3;
-        });
+          let cancel;
+          this.$axios
+            .put("/media/upload", data, {
+              headers: {
+                "Content-Type": "application/json"
+              },
+              onUploadProgress: progressEvent => {
+                let progress = Math.round(
+                  (progressEvent.loaded * 100) / progressEvent.total
+                );
+                // let upAct = document.getElementsByClassName('action-upload')
+                let upAct = document
+                  .getElementsByClassName("action-upload")
+                  [i].getElementsByClassName("upload-progress");
+                if (upAct) {
+                  upAct[0].setAttribute("data-percent", progress);
+                }
+              },
+              cancelToken: new CancelToken(function executor(c) {
+                cancel = c;
+              })
+            })
+            .then(e => {
+              this.fileUploadForm.uploadFile[i].status = 2;
+              // this.listFiles.data.push(e.data);
+              this.fileUploadForm.success += 1;
+              let text = " Upload Selesai";
+              this.fileUploadForm.text = this.fileUploadForm.success + text;
+              if(this.queeUpload < this.files.length){
+                  console.log(this.files[this.queeUpload]);
+                  this.uploadingFile(this.files[this.queeUpload], this.queeUpload)
+              }
+            })
+            .catch(({ response }) => {
+                this.queeUpload += 1;
+                if(this.queeUpload < this.files.length){
+                    this.uploadingFile(this.files[this.queeUpload], this.queeUpload)
+                }
+              if (response.status == 500) {
+                return this.$toast.error(response.statusText);
+              }
+              Object.keys(response.data).forEach(e => {
+                this.$toast.error(response.data[e]);
+              });
+              this.fileUploadForm.uploadFile[i].status = 3;
+            });
 
-        this.fileUploadForm.uploadFile[i].status = 1;
-        this.fileUploadForm.uploadFile[i].name = file.name;
-        this.fileUploadForm.uploadFile[i].type = this.getIconsTypeFile(
-          file.type
-        );
-        this.fileUploadForm.uploadFile[i].abort = cancel;
-        this.fileUploadForm.uploadFile[i].hovered = false;
+            this.fileUploadForm.uploadFile[i].status = 1;
+            this.fileUploadForm.uploadFile[i].name = file.name;
+            this.fileUploadForm.uploadFile[i].type = this.getIconsTypeFile(
+              file.type
+            );
+            this.fileUploadForm.uploadFile[i].abort = cancel;
+            this.fileUploadForm.uploadFile[i].hovered = false;
+        }
+    },
+    checkFileIsexists(file){
+        const ext = (/[.]/.exec(file.name)) ? /[^.]+$/.exec(file.name)[0] : undefined;
+        const name = file.name ? file.name.replace(new RegExp(`(.${ext})$`,), ''): undefined;
+        const query = `?q=title like '${name}%' and name like '%${ext}'`
+        return new Promise(async (resolve, reject) => {
+            try {
+                const {data} = await this.$axios.get('/media/files/open'+query)
+                resolve(data)
+            } catch (e) {
+                reject(e)
+            }
+        })
+    },
+    getContentbinary(file){
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader()
+            reader.readAsDataURL(file)
+            reader.onload = () => resolve(reader.result)
+            reader.onerror = error => reject(error)
+        })
     },
     abortRequest(file) {
       file.abort();
@@ -1045,9 +1083,11 @@ export default {
         this.multiple = false;
       }
     });
-    let infinite = document.getElementsByClassName('infinite-loading-container')[0]
+    let infinite = document.getElementsByClassName(
+      "infinite-loading-container"
+    )[0];
     infinite.removeChild(infinite.children[2]);
-},
+  }
 };
 </script>
 

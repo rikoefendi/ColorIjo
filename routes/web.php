@@ -1,14 +1,19 @@
 <?php
-$namespacePrefix = '\\ColorIjo\\MediaManager\\Http\\';
-Route::group(['prefix' => 'media'], function () use ($namespacePrefix) {
-    Route::post('upload', $namespacePrefix.'Controller@store');
-    Route::get('all', $namespacePrefix.'Controller@list');
-    Route::get('{unique}', $namespacePrefix.'Controller@show');
-    Route::put('{unique}', $namespacePrefix.'Controller@update');
-    Route::delete('delete', $namespacePrefix.'Controller@destroy');
-    Route::get('d/file/{unique}/{size}', $namespacePrefix.'Controller@getImageLink');
-    Route::post('d/file/download', $namespacePrefix.'Controller@getLinkDownload');
-    // /media/file/0/d/'+unique
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+// use ColorIjo\Element\Element;
+Route::get('/', function () {
+    return view('welcome');
 });
-Route::get('download/{hash}/{unique}', $namespacePrefix.'Controller@download');
-// Route::get('view/{hash}/{unique}/{size}', $namespacePrefix.'Controller@getImage');
+Route::post('/test', function(\Illuminate\Http\Request $request){
+    dd($request);
+});

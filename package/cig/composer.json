@@ -1,0 +1,17 @@
+{
+    "name": "colorijo/element",
+    "description": "Library crud generator laravel",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Riko Efendi",
+            "email": "rikoefendi100@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    
+    },
+
+}

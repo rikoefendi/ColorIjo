@@ -1,0 +1,19 @@
+{
+    "name": "colorijo/element",
+    "description": "element html generator for laravel",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Riko Efendi",
+            "email": "rikoefendi100@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "ColorIjo\\Element\\": ""
+        }
+    }
+}

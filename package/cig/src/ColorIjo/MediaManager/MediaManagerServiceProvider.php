@@ -10,6 +10,8 @@ use Illuminate\Foundation\AliasLoader;
 use ColorIjo\MediaManager\MedmaFacade;
 use ColorIjo\MediaManager\MediaManager;
 use ColorIjo\MediaManager\Model;
+use ColorIjo\MediaManager\ListenerUpload;
+use ColorIjo\MediaManager\Events\EventServiceProvider;
 
 class MediaManagerServiceProvider extends ServiceProvider
 {
@@ -22,12 +24,12 @@ class MediaManagerServiceProvider extends ServiceProvider
         $this->app->singleton('medma', function () {
             return new MediaManager();
         });
-
-        $this->loadHelpers();
+        $this->app->register(EventServiceProvider::class);
     }
 
     public function boot()
     {
+        // $this->loadEventServiceProvider;
         $this->loadViewsFrom(__DIR__.'/resources/views', 'medma');
         $this->publishes([
             __DIR__.'/migrations/' => database_path('migrations')
